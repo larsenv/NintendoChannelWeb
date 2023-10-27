@@ -76,4 +76,4 @@ if debug:
 
     @channel_static_blueprint.route("/f/248/49125/1h/entus.wapp.wii.com/6/VHFQ3VjDqKlZDIWAyCY0S38zIoGAoTEqvJjr8OVua0G8UwHqixKklOBAHVw9UaZmTHqOxqSaiDd5bjhSQS6hk6nkYJVdioanD5Lc8mOHkobUkblWf8KxczDUZwY84FIV/thumbnail/<country>/<language>/434968891-001.thumb")
     def thumbnail(country, language):
-        return send_from_directory(f"./channel_static/static/", "thumbnail.bin")
+        return send_from_directory("./channel_static/static/", "thumbnail.bin")
