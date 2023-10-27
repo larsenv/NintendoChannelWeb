@@ -6,8 +6,7 @@ cgi_blueprint = Blueprint("cgi", __name__)
 
 @cgi_blueprint.post("/6/cgi-bin/config.cgi")
 def config():
-    resp = Response("0")
-    return resp
+    return Response("0")
 
 
 @cgi_blueprint.post("/6/cgi-bin/bookmark.cgi")
@@ -66,17 +65,19 @@ def store_time_played():
             game_dict[game_id][0] += time_played
             game_dict[game_id][1] += 1
         except KeyError:
-            game_dict.update({game_id: [time_played, 1]})
+            game_dict[game_id] = [time_played, 1]
 
     # Now we insert into the database
     for game_id, values in game_dict.items():
-        queried_data = (
+        if queried_data := (
             TimePlayed.query.filter_by(serial_number=serial_number)
             .filter_by(game_id=game_id)
             .first()
-        )
+        ):
+            queried_data.times_played = values[1]
+            queried_data.time_played = values[0]
 
-        if not queried_data:
+        else:
             db_time_played = TimePlayed(
                 serial_number=serial_number,
                 game_id=game_id,
@@ -85,10 +86,6 @@ def store_time_played():
             )
 
             db.session.add(db_time_played)
-        else:
-            queried_data.times_played = values[1]
-            queried_data.time_played = values[0]
-
         db.session.commit()
 
     resp = Response()

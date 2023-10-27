@@ -4,14 +4,7 @@ from thegateway.imageencode import video_thumbnail_encode
 
 def validate_mobiclip(file_data: bytes) -> bool:
     # Validate file magic
-    if file_data[0:4] != b"MOC5":
-        return False
-
-    # Ensure we have a valid keyframe index.
-    if b"KI" not in file_data:
-        return False
-
-    return True
+    return False if file_data[:4] != b"MOC5" else b"KI" in file_data
 
 
 def get_mobiclip_length(file_data: bytes) -> int:
@@ -37,11 +30,7 @@ def save_video_data(movie_id: int, thumbnail_data: bytes, video_data: bytes):
 
     # Resize and write thumbnail
     thumbnail_data = video_thumbnail_encode(thumbnail_data)
-    thumbnail = open(f"./assets/videos/{movie_id}.img", "wb")
-    thumbnail.write(thumbnail_data)
-    thumbnail.close()
-
-    # Write video
-    video = open(f"./assets/videos/{movie_id}.mo", "wb")
-    video.write(video_data)
-    video.close()
+    with open(f"./assets/videos/{movie_id}.img", "wb") as thumbnail:
+        thumbnail.write(thumbnail_data)
+    with open(f"./assets/videos/{movie_id}.mo", "wb") as video:
+        video.write(video_data)
